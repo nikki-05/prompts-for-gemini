@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kinetic Typography Generator - Black & Red Edition</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@400;700;900&family=Montserrat:wght@800;900&family=Space+Grotesk:wght@700&family=Syne:wght@800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #09090b;
+            color: #f4f4f5;
+            overflow-x: hidden;
+        }
+        /* Custom scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #09090b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #27272a;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #dc2626;
+        }
+        /* Canvas glowing aesthetic */
+        .canvas-glow {
+            box-shadow: 0 0 50px rgba(220, 38, 38, 0.15);
+        }
+        /* Range slider customization */
+        input[type=range] {
+            -webkit-appearance: none;
+            background: #27272a;
+            border-radius: 4px;
+            height: 6px;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: #dc2626;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(220, 38, 38, 0.8);
+            transition: transform 0.1s ease;
+        }
+        input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col md:flex-row overflow-hidden bg-zinc-950 text-zinc-100">
+
+    <!-- Left Control Sidebar -->
+    <aside class="w-full md:w-96 bg-zinc-900/90 border-r border-zinc-800 flex flex-col h-auto md:h-full z-10 shrink-0 backdrop-blur-md">
+        <!-- Header -->
+        <div class="p-4 border-b border-zinc-800 flex items-center justify-between bg-zinc-950/50">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-red-600/20 rounded-lg border border-red-600/30 text-red-500">
+                    <i data-lucide="type" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h1 class="font-black text-sm tracking-widest uppercase text-white flex items-center gap-2">
+                        KINETIC <span class="text-red-500">TYPE</span>
+                    </h1>
+                    <p class="text-xs text-zinc-400">Black & Red Motion Engine</p>
+                </div>
+            </div>
+            <span class="px-2 py-0.5 text-[10px] font-mono bg-red-950 text-red-400 border border-red-800/50 rounded">v2.0</span>
+        </div>
+
+        <!-- Scrollable Controls -->
+        <div class="flex-1 overflow-y-auto p-4 space-y-6">
+
+            <!-- Text & Layout Settings -->
+            <div class="space-y-3">
+                <label class="text-xs font-bold tracking-wider text-zinc-400 uppercase flex items-center gap-2">
+                    <i data-lucide="edit-3" class="w-3.5 h-3.5 text-red-500"></i> Typography & Text
+                </label>
+                <div>
+                    <label class="block text-xs text-zinc-400 mb-1">Source Text</label>
+                    <textarea id="textInput" rows="2" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition font-mono resize-none">KINETIC
+VORTEX
+MOTION</textarea>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs text-zinc-400 mb-1">Font Family</label>
+                        <select id="fontSelect" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-2 text-xs text-zinc-200 focus:outline-none focus:border-red-500">
+                            <option value="Inter" selected>Inter (Bold)</option>
+                            <option value="Montserrat">Montserrat</option>
+                            <option value="Syne">Syne</option>
+                            <option value="Space Grotesk">Space Grotesk</option>
+                            <option value="Cinzel">Cinzel</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-zinc-400 mb-1">Text Size</label>
+                        <input type="range" id="fontSize" min="30" max="140" value="75" class="w-full">
+                    </div>
+                </div>
+            </div>
+
+            <hr class="border-zinc-800/80">
+
+            <!-- Motion & Dynamic FX -->
+            <div class="space-y-4">
+                <label class="text-xs font-bold tracking-wider text-zinc-400 uppercase flex items-center gap-2">
+                    <i data-lucide="zap" class="w-3.5 h-3.5 text-red-500"></i> Distortion Controls
+                </label>
+
+                <!-- Vortex Pull -->
+                <div class="bg-zinc-950/50 p-3 rounded-lg border border-zinc-800/60 space-y-2">
+                    <div class="flex justify-between text-xs">
+                        <span class="text-zinc-300 font-medium flex items-center gap-1.5">
+                            <i data-lucide="rotate-cw" class="w-3 h-3 text-red-500"></i> Vortex Pull Strength
+                        </span>
+                        <span id="vortexVal" class="font-mono text-red-400">0.40</span>
+                    </div>
+                    <input type="range" id="vortexStrength" min="0" max="1" step="0.01" value="0.40" class="w-full">
+                    <div class="flex justify-between text-[10px] text-zinc-500">
+                        <span>Radius</span>
+                        <input type="range" id="vortexRadius" min="50" max="500" value="250" class="w-48">
+                    </div>
+                </div>
+
+                <!-- Wave Motion -->
+                <div class="bg-zinc-950/50 p-3 rounded-lg border border-zinc-800/60 space-y-2">
+                    <div class="flex justify-between text-xs">
+                        <span class="text-zinc-300 font-medium flex items-center gap-1.5">
+                            <i data-lucide="activity" class="w-3 h-3 text-red-500"></i> Wave Frequency & Amplitude
+                        </span>
+                        <span id="waveVal" class="font-mono text-red-400">35px</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <span class="text-[10px] text-zinc-500 block">Amplitude</span>
+                            <input type="range" id="waveAmp" min="0" max="100" value="35" class="w-full">
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-zinc-500 block">Frequency</span>
+                            <input type="range" id="waveFreq" min="0.001" max="0.03" step="0.001" value="0.008" class="w-full">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kinetic Pulse & Turbulence -->
+                <div class="bg-zinc-950/50 p-3 rounded-lg border border-zinc-800/60 space-y-2">
+                    <div class="flex justify-between text-xs">
+                        <span class="text-zinc-300 font-medium flex items-center gap-1.5">
+                            <i data-lucide="wind" class="w-3 h-3 text-red-500"></i> Noise & Ripple Speed
+                        </span>
+                        <span id="speedVal" class="font-mono text-red-400">1.0x</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <span class="text-[10px] text-zinc-500 block">Speed</span>
+                            <input type="range" id="animSpeed" min="0.1" max="3" step="0.1" value="1.0" class="w-full">
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-zinc-500 block">Noise Jitter</span>
+                            <input type="range" id="noiseJitter" min="0" max="25" value="4" class="w-full">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="border-zinc-800/80">
+
+            <!-- Color & Theme Modes -->
+            <div class="space-y-3">
+                <label class="text-xs font-bold tracking-wider text-zinc-400 uppercase flex items-center gap-2">
+                    <i data-lucide="palette" class="w-3.5 h-3.5 text-red-500"></i> Aesthetic Preset (Black & Red)
+                </label>
+                
+                <div class="grid grid-cols-2 gap-2">
+                    <button id="themeCrimsonDark" class="p-2.5 rounded-lg border border-red-600/50 bg-red-950/30 text-xs text-left hover:border-red-500 transition flex items-center justify-between group active-theme">
+                        <span class="font-semibold text-red-400">Crimson Dark</span>
+                        <span class="w-3 h-3 rounded-full bg-red-600 border border-zinc-950"></span>
+                    </button>
+                    <button id="themeCyberPunk" class="p-2.5 rounded-lg border border-zinc-800 bg-zinc-950 text-xs text-left hover:border-red-600/50 transition flex items-center justify-between group">
+                        <span class="font-semibold text-zinc-400 group-hover:text-red-400">Neon Blood</span>
+                        <span class="w-3 h-3 rounded-full bg-red-500 border border-zinc-950 shadow-[0_0_8px_#ef4444]"></span>
+                    </button>
+                    <button id="themeMonochrome" class="p-2.5 rounded-lg border border-zinc-800 bg-zinc-950 text-xs text-left hover:border-zinc-600 transition flex items-center justify-between group">
+                        <span class="font-semibold text-zinc-400 group-hover:text-zinc-200">Obsidian Void</span>
+                        <span class="w-3 h-3 rounded-full bg-zinc-800 border border-zinc-950"></span>
+                    </button>
+                    <button id="themeInverted" class="p-2.5 rounded-lg border border-zinc-800 bg-zinc-950 text-xs text-left hover:border-red-600/50 transition flex items-center justify-between group">
+                        <span class="font-semibold text-zinc-400 group-hover:text-red-400">Red Shift</span>
+                        <span class="w-3 h-3 rounded-full bg-red-900 border border-zinc-950"></span>
+                    </button>
+                </div>
+            </div>
+
+            <hr class="border-zinc-800/80">
+
+            <!-- Interactive Mode Toggle -->
+            <div class="flex items-center justify-between p-3 bg-zinc-950/50 border border-zinc-800/60 rounded-lg">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="mouse-pointer-click" class="w-4 h-4 text-red-500"></i>
+                    <div>
+                        <div class="text-xs font-semibold text-zinc-200">Interactive Vortex</div>
+                        <div class="text-[10px] text-zinc-400">Follow mouse/touch location</div>
+                    </div>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="interactiveToggle" class="sr-only peer" checked>
+                    <div class="w-9 h-5 bg-zinc-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-red-600"></div>
+                </label>
+            </div>
+        </div>
+
+        <!-- Render Controls / Footer -->
+        <div class="p-4 border-t border-zinc-800 bg-zinc-950/70 flex items-center gap-2">
+            <button id="playPauseBtn" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 text-xs transition shadow-lg shadow-red-950/50">
+                <i data-lucide="pause" class="w-4 h-4" id="playIcon"></i>
+                <span id="playText">Pause</span>
+            </button>
+            <button id="recordBtn" class="bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-zinc-200 font-bold p-2.5 rounded-lg flex items-center justify-center gap-2 text-xs transition" title="Export Frame Image">
+                <i data-lucide="camera" class="w-4 h-4 text-red-400"></i>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Interactive Canvas Screen -->
+    <main class="flex-1 relative flex flex-col items-center justify-center p-4 md:p-8 overflow-hidden bg-black">
+        <!-- Canvas Background Grid Detail -->
+        <div class="absolute inset-0 bg-[radial-gradient(#18181b_1px,transparent_1px)] [background-size:24px_24px] opacity-40 pointer-events-none"></div>
+
+        <!-- Interactive Canvas Wrapper -->
+        <div class="relative w-full h-full flex items-center justify-center max-w-5xl max-h-[85vh]">
+            <canvas id="kineticCanvas" class="w-full h-full rounded-2xl canvas-glow border border-zinc-900/80 cursor-crosshair bg-black"></canvas>
+            
+            <!-- Floating Overlay Badge -->
+            <div class="absolute top-4 right-4 pointer-events-none bg-zinc-950/80 backdrop-blur border border-zinc-800/80 px-3 py-1.5 rounded-full flex items-center gap-2 text-[11px] text-zinc-400">
+                <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                <span>Live Kinetic Engine</span>
+            </div>
+
+            <!-- On-Screen Instructions -->
+            <div id="canvasHint" class="absolute bottom-6 left-1/2 -translate-x-1/2 pointer-events-none text-zinc-500 text-xs tracking-wide bg-zinc-950/60 px-4 py-1.5 rounded-full border border-zinc-900 backdrop-blur opacity-75 transition-opacity duration-300">
+                Move cursor over canvas to direct the Vortex distortion
+            </div>
+        </div>
+    </main>
+
+    <!-- Custom Canvas Distortion Engine JS -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Canvas Setup
+        const canvas = document.getElementById('kineticCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Dynamic Parameters
+        const params = {
+            text: "KINETIC\nVORTEX\nMOTION",
+            fontFamily: "Inter",
+            fontSize: 75,
+            vortexStrength: 0.40,
+            vortexRadius: 250,
+            waveAmp: 35,
+            waveFreq: 0.008,
+            animSpeed: 1.0,
+            noiseJitter: 4,
+            interactive: true,
+            theme: 'crimsonDark',
+            isPlaying: true
+        };
+
+        // Theme Definitions (Black & Red Variations)
+        const themes = {
+            crimsonDark: {
+                bg: '#050505',
+                primary: '#dc2626',
+                secondary: '#991b1b',
+                accent: '#ef4444',
+                grid: '#18181b'
+            },
+            cyberPunk: {
+                bg: '#000000',
+                primary: '#ff003c',
+                secondary: '#79001e',
+                accent: '#ffffff',
+                grid: '#270913'
+            },
+            monochrome: {
+                bg: '#09090b',
+                primary: '#ffffff',
+                secondary: '#52525b',
+                accent: '#dc2626',
+                grid: '#18181b'
+            },
+            inverted: {
+                bg: '#180505',
+                primary: '#ef4444',
+                secondary: '#7f1d1d',
+                accent: '#fca5a5',
+                grid: '#2a0a0a'
+            }
+        };
+
+        // Pointer state for distortion targeting
+        const mouse = {
+            x: 0,
+            y: 0,
+            targetX: 0,
+            targetY: 0,
+            isHovered: false
+        };
+
+        let time = 0;
+        let animationFrameId = null;
+
+        // Resize Canvas dynamically
+        function resizeCanvas() {
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width * window.devicePixelRatio;
+            canvas.height = rect.height * window.devicePixelRatio;
+            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+            
+            // Set default vortex focal point to center
+            if (!mouse.isHovered) {
+                mouse.x = rect.width / 2;
+                mouse.y = rect.height / 2;
+                mouse.targetX = rect.width / 2;
+                mouse.targetY = rect.height / 2;
+            }
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+
+        // Offscreen sampling canvas for text point extraction
+        const offscreenCanvas = document.createElement('canvas');
+        const offCtx = offscreenCanvas.getContext('2d');
+
+        let textPoints = [];
+
+        // Sample typography onto a grid of points for deformation
+        function generateTextPoints() {
+            const width = canvas.width / window.devicePixelRatio;
+            const height = canvas.height / window.devicePixelRatio;
+
+            if (width === 0 || height === 0) return;
+
+            offscreenCanvas.width = width;
+            offscreenCanvas.height = height;
+
+            offCtx.clearRect(0, 0, width, height);
+            offCtx.fillStyle = '#ffffff';
+            offCtx.textAlign = 'center';
+            offCtx.textBaseline = 'middle';
+            offCtx.font = `900 ${params.fontSize}px '${params.fontFamily}', sans-serif`;
+
+            const lines = params.text.split('\n');
+            const lineHeight = params.fontSize * 1.15;
+            const startY = (height / 2) - ((lines.length - 1) * lineHeight / 2);
+
+            lines.forEach((line, index) => {
+                offCtx.fillText(line, width / 2, startY + (index * lineHeight));
+            });
+
+            // Extract pixels to build vertex points
+            const imgData = offCtx.getImageData(0, 0, width, height);
+            const data = imgData.data;
+            textPoints = [];
+
+            // Point sampling density (resolution step)
+            const step = Math.max(2, Math.floor(params.fontSize / 25));
+
+            for (let y = 0; y < height; y += step) {
+                for (let x = 0; x < width; x += step) {
+                    const alpha = data[(y * width + x) * 4 + 3];
+                    if (alpha > 128) {
+                        textPoints.push({
+                            x: x,
+                            y: y,
+                            ox: x, // Original X
+                            oy: y  // Original Y
+                        });
+                    }
+                }
+            }
+        }
+
+        // Render Frame Loop
+        function render() {
+            const width = canvas.width / window.devicePixelRatio;
+            const height = canvas.height / window.devicePixelRatio;
+            const activeTheme = themes[params.theme];
+
+            // Smooth mouse motion tracking
+            mouse.x += (mouse.targetX - mouse.x) * 0.1;
+            mouse.y += (mouse.targetY - mouse.y) * 0.1;
+
+            if (params.isPlaying) {
+                time += 0.03 * params.animSpeed;
+            }
+
+            // Clear Background
+            ctx.fillStyle = activeTheme.bg;
+            ctx.fillRect(0, 0, width, height);
+
+            // Subtle Background Grid
+            ctx.strokeStyle = activeTheme.grid;
+            ctx.lineWidth = 1;
+            const gridSize = 40;
+            for (let x = 0; x < width; x += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, height);
+                ctx.stroke();
+            }
+            for (let y = 0; y < height; y += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(width, y);
+                ctx.stroke();
+            }
+
+            // Focal point center for Vortex calculation
+            const vortexCenter = params.interactive ? mouse : { x: width / 2, y: height / 2 };
+
+            // Render Deformed Points
+            ctx.fillStyle = activeTheme.primary;
+
+            for (let i = 0; i < textPoints.length; i++) {
+                const pt = textPoints[i];
+
+                // 1. Wave Motion Distortion (Sine/Cosine displacement)
+                const waveX = Math.sin(pt.oy * params.waveFreq + time) * params.waveAmp;
+                const waveY = Math.cos(pt.ox * params.waveFreq + time) * (params.waveAmp * 0.5);
+
+                let px = pt.ox + waveX;
+                let py = pt.oy + waveY;
+
+                // 2. Vortex Pull Distortion (Rotational Twist + Attraction)
+                const dx = px - vortexCenter.x;
+                const dy = py - vortexCenter.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (dist < params.vortexRadius && dist > 0) {
+                    const normDist = (1 - dist / params.vortexRadius);
+                    const angle = Math.atan2(dy, dx);
+                    
+                    // Vortex rotation angle scale based on distance
+                    const twist = normDist * params.vortexStrength * Math.PI * 2;
+                    const pull = normDist * params.vortexStrength * 40;
+
+                    const newAngle = angle + twist;
+                    const newDist = dist - pull;
+
+                    px = vortexCenter.x + Math.cos(newAngle) * newDist;
+                    py = vortexCenter.y + Math.sin(newAngle) * newDist;
+                }
+
+                // 3. Noise Jitter
+                if (params.noiseJitter > 0) {
+                    px += (Math.random() - 0.5) * params.noiseJitter;
+                    py += (Math.random() - 0.5) * params.noiseJitter;
+                }
+
+                // Dynamic Color Interpolation based on deformation intensity
+                const distFromCenter = Math.hypot(px - vortexCenter.x, py - vortexCenter.y);
+                if (distFromCenter < 120 && params.vortexStrength > 0.1) {
+                    ctx.fillStyle = activeTheme.accent;
+                } else if (i % 7 === 0) {
+                    ctx.fillStyle = activeTheme.secondary;
+                } else {
+                    ctx.fillStyle = activeTheme.primary;
+                }
+
+                // Draw Particle Dot
+                const particleSize = Math.max(1.5, params.fontSize / 35);
+                ctx.fillRect(px, py, particleSize, particleSize);
+            }
+
+            // Draw Vortex Control Ring Overlay if interactive
+            if (params.interactive && (mouse.isHovered || params.vortexStrength > 0)) {
+                ctx.save();
+                ctx.strokeStyle = activeTheme.accent;
+                ctx.lineWidth = 1;
+                ctx.setLineDash([4, 6]);
+                ctx.beginPath();
+                ctx.arc(vortexCenter.x, vortexCenter.y, params.vortexRadius, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                // Outer Pulse Ring
+                const pulseRadius = params.vortexRadius + Math.sin(time * 3) * 8;
+                ctx.strokeStyle = activeTheme.secondary;
+                ctx.beginPath();
+                ctx.arc(vortexCenter.x, vortexCenter.y, Math.max(0, pulseRadius), 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.restore();
+            }
+
+            animationFrameId = requestAnimationFrame(render);
+        }
+
+        // Event Listeners for UI Controls
+        document.getElementById('textInput').addEventListener('input', (e) => {
+            params.text = e.target.value;
+            generateTextPoints();
+        });
+
+        document.getElementById('fontSelect').addEventListener('change', (e) => {
+            params.fontFamily = e.target.value;
+            generateTextPoints();
+        });
+
+        document.getElementById('fontSize').addEventListener('input', (e) => {
+            params.fontSize = parseFloat(e.target.value);
+            generateTextPoints();
+        });
+
+        document.getElementById('vortexStrength').addEventListener('input', (e) => {
+            params.vortexStrength = parseFloat(e.target.value);
+            document.getElementById('vortexVal').innerText = params.vortexStrength.toFixed(2);
+        });
+
+        document.getElementById('vortexRadius').addEventListener('input', (e) => {
+            params.vortexRadius = parseFloat(e.target.value);
+        });
+
+        document.getElementById('waveAmp').addEventListener('input', (e) => {
+            params.waveAmp = parseFloat(e.target.value);
+            document.getElementById('waveVal').innerText = `${params.waveAmp}px`;
+        });
+
+        document.getElementById('waveFreq').addEventListener('input', (e) => {
+            params.waveFreq = parseFloat(e.target.value);
+        });
+
+        document.getElementById('animSpeed').addEventListener('input', (e) => {
+            params.animSpeed = parseFloat(e.target.value);
+            document.getElementById('speedVal').innerText = `${params.animSpeed.toFixed(1)}x`;
+        });
+
+        document.getElementById('noiseJitter').addEventListener('input', (e) => {
+            params.noiseJitter = parseFloat(e.target.value);
+        });
+
+        document.getElementById('interactiveToggle').addEventListener('change', (e) => {
+            params.interactive = e.target.checked;
+        });
+
+        // Interactive Canvas Pointer Tracking
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            mouse.targetX = e.clientX - rect.left;
+            mouse.targetY = e.clientY - rect.top;
+            mouse.isHovered = true;
+        });
+
+        canvas.addEventListener('mouseleave', () => {
+            mouse.isHovered = false;
+        });
+
+        // Touch support
+        canvas.addEventListener('touchmove', (e) => {
+            if (e.touches.length > 0) {
+                const rect = canvas.getBoundingClientRect();
+                mouse.targetX = e.touches[0].clientX - rect.left;
+                mouse.targetY = e.touches[0].clientY - rect.top;
+                mouse.isHovered = true;
+            }
+        }, { passive: true });
+
+        // Play/Pause Control
+        const playBtn = document.getElementById('playPauseBtn');
+        const playIcon = document.getElementById('playIcon');
+        const playText = document.getElementById('playText');
+
+        playBtn.addEventListener('click', () => {
+            params.isPlaying = !params.isPlaying;
+            if (params.isPlaying) {
+                playIcon.setAttribute('data-lucide', 'pause');
+                playText.innerText = 'Pause';
+            } else {
+                playIcon.setAttribute('data-lucide', 'play');
+                playText.innerText = 'Play';
+            }
+            lucide.createIcons();
+        });
+
+        // Export Snapshot
+        document.getElementById('recordBtn').addEventListener('click', () => {
+            const image = canvas.toDataURL("image/png");
+            const link = document.createElement('a');
+            link.download = `kinetic-typography-${Date.now()}.png`;
+            link.href = image;
+            link.click();
+        });
+
+        // Theme switching logic
+        const themeBtns = {
+            themeCrimsonDark: 'crimsonDark',
+            themeCyberPunk: 'cyberPunk',
+            themeMonochrome: 'monochrome',
+            themeInverted: 'inverted'
+        };
+
+        Object.keys(themeBtns).forEach(btnId => {
+            document.getElementById(btnId).addEventListener('click', (e) => {
+                // Reset active theme button styling
+                Object.keys(themeBtns).forEach(id => {
+                    document.getElementById(id).classList.remove('border-red-600/50', 'bg-red-950/30', 'active-theme');
+                    document.getElementById(id).classList.add('border-zinc-800', 'bg-zinc-950');
+                });
+
+                const currentBtn = e.currentTarget;
+                currentBtn.classList.remove('border-zinc-800', 'bg-zinc-950');
+                currentBtn.classList.add('border-red-600/50', 'bg-red-950/30', 'active-theme');
+
+                params.theme = themeBtns[btnId];
+            });
+        });
+
+        // Initialize App
+        window.onload = () => {
+            resizeCanvas();
+            generateTextPoints();
+            render();
+        };
+    </script>
+</body>
+</html>
